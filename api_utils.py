@@ -1,17 +1,18 @@
 import aiohttp
+from config.py import ASSEMBLYAI_API_KEY 
 
 async def upload_audio(session, audio_file, headers):
     with open(audio_file, 'rb') as f:
-        upload_response = await session.post("https://api.assemblyai.com/v2/upload", headers=headers, data=f)
+        upload_response = await session.post("ASSEMBLYAI_API_KEY", headers=headers, data=f)
         return await upload_response.json()
 
 async def request_transcription(session, audio_url, headers):
     transcript_request = {"audio_url": audio_url}
-    transcript_response = await session.post("https://api.assemblyai.com/v2/transcript", headers=headers, json=transcript_request)
+    transcript_response = await session.post("ASSEMBLYAI_API_KEY ", headers=headers, json=transcript_request)
     return await transcript_response.json()
 
 async def poll_transcription(session, transcript_id, headers):
-    transcript_result_url = f"https://api.assemblyai.com/v2/transcript/{transcript_id}"
+    transcript_result_url = f"ASSEMBLYAI_API_KEY/{transcript_id}"
     max_attempts = 20
     attempts = 0
 

@@ -4,7 +4,7 @@ from gtts import gTTS
 import os
 from playsound import playsound
 import subprocess
-from config import ASSEMBLYAI_API_KEY, AZURE_API_KEY
+from config import ASSEMBLYAI_API_KEY, AZURE_API_KEY , AZURE_ENDPOINT 
 
 def combine_audio_video(video_path, audio_path, output_path):
     command = ["ffmpeg", "-i", video_path, "-i", audio_path, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental", output_path]
@@ -12,16 +12,16 @@ def combine_audio_video(video_path, audio_path, output_path):
 
 async def upload_audio(session, audio_file, headers):
     with open(audio_file, 'rb') as f:
-        upload_response = await session.post("https://api.assemblyai.com/v2/upload", headers=headers, data=f)
+        upload_response = await session.post("ASSEMBLYAI_API_KEY", headers=headers, data=f)
         return await upload_response.json()
 
 async def request_transcription(session, audio_url, headers):
     transcript_request = {"audio_url": audio_url}
-    transcript_response = await session.post("https://api.assemblyai.com/v2/transcript", headers=headers, json=transcript_request)
+    transcript_response = await session.post("ASSEMBLYAI_API_KEY", headers=headers, json=transcript_request)
     return await transcript_response.json()
 
 async def poll_transcription(session, transcript_id, headers):
-    transcript_result_url = f"https://api.assemblyai.com/v2/transcript/{transcript_id}"
+    transcript_result_url = f"ASSEMBLYAI_API_KEY/{transcript_id}"
     max_attempts = 20
     attempts = 0
 
@@ -40,7 +40,7 @@ async def poll_transcription(session, transcript_id, headers):
     raise Exception("Transcription polling timed out.")
 
 async def correct_grammar_with_azure(text):
-    azure_endpoint = "https://your-azure-endpoint"
+    azure_endpoint = "AZURE_ENDPOINT"
     headers = {"Content-Type": "application/json", "api-key": AZURE_API_KEY}
     data = {
         "messages": [{"role": "user", "content": f"Correct the grammatical structure: {text}"}],
